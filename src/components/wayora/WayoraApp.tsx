@@ -473,7 +473,7 @@ function RouteOptionsScreen({ waypoints, onBack, selected, setSelected, onContin
         </div>
         <RouteMap route={waypoints} className="mb-4 h-40" showAllLabels />
         <div className="space-y-3">{routeOptions.map((route) => <RouteCard key={route.id} route={route} selected={selected === route.id} onSelect={() => setSelected(route.id)} />)}</div>
-        <StaySuggestionsSection />
+        
         <Button variant="wayora" size="lg" className="mt-4 w-full" onClick={onContinue}>See Places Along Route<ArrowRight /></Button>
       </main>
     </div>
