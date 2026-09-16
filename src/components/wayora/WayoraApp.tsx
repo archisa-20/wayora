@@ -1046,8 +1046,11 @@ export function WayoraApp() {
     setTrip({ selectedPlaceIds: trip.selectedPlaceIds.includes(id) ? trip.selectedPlaceIds.filter((item) => item !== id) : [...trip.selectedPlaceIds, id] });
   const removeWaypoint = (id: string) =>
     setTrip({ stopIds: trip.stopIds.filter((item) => item !== id), selectedPlaceIds: trip.selectedPlaceIds.filter((item) => item !== id) });
+  const toggleStay = (id: string) =>
+    setTrip({ stayIds: trip.stayIds.includes(id) ? trip.stayIds.filter((item) => item !== id) : [...trip.stayIds, id] });
+  const setStayIds = (ids: string[]) => setTrip({ stayIds: ids });
 
-  const startTrip = () => { setTrip({ status: "active", legIndex: 0, legProgress: 0, arrived: false }); go("navigate"); };
+  const startTrip = () => { setPaused(false); setTrip({ status: "active", legIndex: 0, legProgress: 0, arrived: false }); go("navigate"); };
   const simulate = () => {
     const next = Math.min(1, trip.legProgress + 0.34);
     if (next >= 1) setTrip({ legProgress: 1, arrived: true });
@@ -1066,9 +1069,10 @@ export function WayoraApp() {
     case "setup": content = <TripSetupScreen trip={trip} setTrip={setTrip} onBack={back} onFind={() => go("routes")} />; break;
     case "routes": content = <RouteOptionsScreen waypoints={waypoints} onBack={back} selected={selectedRoute} setSelected={setSelectedRoute} onContinue={() => go("recommend")} />; break;
     case "recommend": content = <RecommendationsScreen places={corridorPlaces} selectedIds={trip.selectedPlaceIds} toggle={togglePlace} onBack={back} onContinue={() => go("plan")} />; break;
-    case "plan": content = <RoutePlanScreen route={waypoints} onBack={back} onRemove={removeWaypoint} onStart={startTrip} onOverview={() => go("overview")} />; break;
-    case "overview": content = <TripOverviewScreen route={route} waypoints={waypoints} onBack={back} onPacking={() => go("packing")} onSave={() => requireSignIn("save")} onStart={startTrip} />; break;
-    case "navigate": content = <ActiveNavigationScreen route={waypoints} legIndex={trip.legIndex} legProgress={trip.legProgress} arrived={trip.arrived} onSimulate={simulate} onContinue={continueTrip} onBack={back} onFinish={finishTrip} />; break;
+    case "plan": content = <RoutePlanScreen route={waypoints} stayIds={trip.stayIds} onBack={back} onRemove={removeWaypoint} onStart={startTrip} onOverview={() => go("overview")} onStays={() => go("stays")} />; break;
+    case "stays": content = <StaysScreen route={waypoints} stayIds={trip.stayIds} toggleStay={toggleStay} setStayIds={setStayIds} onBack={back} onContinue={() => go("overview")} />; break;
+    case "overview": content = <TripOverviewScreen route={route} waypoints={waypoints} stayIds={trip.stayIds} onBack={back} onPacking={() => go("packing")} onSave={() => requireSignIn("save")} onStart={startTrip} onStays={() => go("stays")} />; break;
+    case "navigate": content = <ActiveNavigationScreen route={waypoints} legIndex={trip.legIndex} legProgress={trip.legProgress} arrived={trip.arrived} paused={paused} onTogglePause={() => setPaused((value) => !value)} onSimulate={simulate} onContinue={continueTrip} onBack={back} onFinish={finishTrip} />; break;
     case "packing": content = <PackingScreen groups={packing} setGroups={setPacking} onBack={back} onBookings={() => go("bookings")} onGate={() => requireSignIn("packing")} />; break;
     case "bookings": content = <BookingsScreen onBack={back} onContinue={() => go("dashboard")} onOpenOption={setBookingDetail} />; break;
     case "auth": content = <AuthScreen onBack={back} onSuccess={authSuccess} />; break;
