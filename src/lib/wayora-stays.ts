@@ -285,6 +285,10 @@ export function findStay(id: string): StayOption | undefined {
   return stayPool.find((stay) => stay.id === id);
 }
 
+export function findStayByName(name: string): StayOption | undefined {
+  return stayPool.find((stay) => stay.name === name);
+}
+
 /** Tappable areas along the selected route: each waypoint plus each stretch between them. */
 export function stayAreasForRoute(route: Waypoint[]): StayArea[] {
   const areas: StayArea[] = [];

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
@@ -80,6 +80,7 @@ import {
 import { RouteMap, SafetyBadge } from "@/components/wayora/RouteMap";
 import { LiveNavMap } from "@/components/wayora/LiveNavMap";
 import { StayDiscovery, StaySummary } from "@/components/wayora/StayDiscovery";
+import { findStayByName } from "@/lib/wayora-stays";
 
 type Screen =
   | "intro"
@@ -933,6 +934,7 @@ function BookingDetail({ title, open, onOpenChange, onSave }: { title: string; o
 
 export function WayoraApp() {
   const [screen, setScreen] = useState<Screen>("intro");
+  const viewportRef = useRef<HTMLDivElement>(null);
   const [history, setHistory] = useState<Screen[]>([]);
   const [selectedRoute, setSelectedRoute] = useState("scenic");
   const [packing, setPacking] = useState(initialPacking);
@@ -970,15 +972,28 @@ export function WayoraApp() {
     return recommendedPlaces.filter((place) => place.km > low && place.km < high);
   }, [trip.originId, trip.destinationId]);
 
-  const go = (next: Screen) => { setHistory((items) => [...items, screen]); setScreen(next); window.scrollTo({ top: 0, behavior: "smooth" }); };
-  const back = () => { const previous = history[history.length - 1] ?? "dashboard"; setHistory((items) => items.slice(0, -1)); setScreen(previous); window.scrollTo({ top: 0, behavior: "smooth" }); };
-  const tabNavigate = (next: Screen) => { setHistory([]); setScreen(next); window.scrollTo({ top: 0, behavior: "smooth" }); };
+  useEffect(() => {
+    if (viewportRef.current) viewportRef.current.scrollTop = 0;
+  }, [screen]);
+
+  const go = (next: Screen) => { setHistory((items) => [...items, screen]); setScreen(next); };
+  const back = () => { const previous = history[history.length - 1] ?? "dashboard"; setHistory((items) => items.slice(0, -1)); setScreen(previous); };
+  const tabNavigate = (next: Screen) => { setHistory([]); setScreen(next); };
   const requireSignIn = (kind: PromptKind, returnTo: Screen = screen) => { if (signedIn) { if (kind === "offline") go("offline"); return; } setAuthReturn(returnTo); setPrompt(kind); };
   const openAuth = () => { setPrompt(null); go("auth"); };
   const authSuccess = () => { setSignedIn(true); setScreen(authReturn === "offline" ? "offline" : "dashboard"); setHistory([]); };
 
-  const togglePlace = (id: string) =>
-    setTrip({ selectedPlaceIds: trip.selectedPlaceIds.includes(id) ? trip.selectedPlaceIds.filter((item) => item !== id) : [...trip.selectedPlaceIds, id] });
+  const togglePlace = (id: string) => {
+    const selected = trip.selectedPlaceIds.includes(id);
+    const place = findPlace(id);
+    const stayId = place?.category === "Stay" ? findStayByName(place.name)?.id : undefined;
+    setTrip({
+      selectedPlaceIds: selected ? trip.selectedPlaceIds.filter((item) => item !== id) : [...trip.selectedPlaceIds, id],
+      ...(stayId
+        ? { stayIds: selected ? trip.stayIds.filter((item) => item !== stayId) : [...trip.stayIds, stayId] }
+        : {}),
+    });
+  };
   const removeWaypoint = (id: string) =>
     setTrip({ stopIds: trip.stopIds.filter((item) => item !== id), selectedPlaceIds: trip.selectedPlaceIds.filter((item) => item !== id) });
   const toggleStay = (id: string) =>
@@ -1019,7 +1034,7 @@ export function WayoraApp() {
   }
   return (
     <div className="app-stage bg-muted">
-      <div className="phone-shell app-viewport relative mx-auto overflow-x-hidden bg-background sm:rounded-[34px] sm:border sm:border-border">
+      <div ref={viewportRef} className="phone-shell app-viewport relative mx-auto overflow-x-hidden bg-background sm:rounded-[34px] sm:border sm:border-border">
         {content}
         <SignInPrompt kind={prompt} open={prompt !== null} onOpenChange={(open) => !open && setPrompt(null)} onSignIn={openAuth} onGuest={() => setPrompt(null)} />
         <BookingDetail title={bookingDetail} open={Boolean(bookingDetail)} onOpenChange={(open) => !open && setBookingDetail("")} onSave={() => { setBookingDetail(""); requireSignIn("booking"); }} />
