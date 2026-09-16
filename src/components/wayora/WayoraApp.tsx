@@ -822,6 +822,14 @@ function TripOverviewScreen({ route, waypoints, stayIds, onBack, onPacking, onSa
         <div><SectionTitle>Weather Along Your Route</SectionTitle><WeatherStrip route={waypoints} /></div>
         <div><SectionTitle>Your Route</SectionTitle><RouteMap route={waypoints} className="h-44" showAllLabels /></div>
         <div><SectionTitle>Journey Flow</SectionTitle><RouteFlow route={waypoints} /></div>
+        <div>
+          <SectionTitle action={<Button variant="ghost" className="h-7 px-1 text-[10px] text-primary" onClick={onStays}>{stayIds.length > 0 ? "Edit stays" : "Add stays"}<ChevronRight /></Button>}>Your Stays</SectionTitle>
+          {stayIds.length > 0 ? (
+            <StaySummary stayIds={stayIds} />
+          ) : (
+            <Card className="flex gap-3 p-3"><BedDouble className="h-4 w-4 shrink-0 text-primary" /><p className="text-[10px] leading-4 text-muted-foreground">No stays selected yet. Explore stays along your route to complete the plan.</p></Card>
+          )}
+        </div>
         <Card className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 bg-primary-soft p-3"><span className="grid h-9 w-9 place-items-center rounded-full bg-primary text-primary-foreground"><ShieldCheck className="h-4 w-4" /></span><div className="min-w-0"><strong className="block text-[10px]">Route safety looks good</strong><p className="text-[8px] text-muted-foreground">Well-lit highways and medical stops near most waypoints.</p></div><Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Safety information"><Info /></Button></Card>
         <Button variant="wayora" size="lg" className="w-full" onClick={onStart}><Play />Start Trip</Button>
         <Button variant="outline" className="w-full" onClick={onPacking}>Continue to Packing<ChevronRight /></Button>
