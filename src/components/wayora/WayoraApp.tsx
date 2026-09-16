@@ -1005,11 +1005,13 @@ export function WayoraApp() {
   const [authReturn, setAuthReturn] = useState<Screen>("dashboard");
   const [signedIn, setSignedIn] = useState(false);
   const [bookingDetail, setBookingDetail] = useState("");
+  const [paused, setPaused] = useState(false);
   const [trip, setTripState] = useState<TripState>({
     originId: "new-delhi",
     destinationId: "manali",
     stopIds: ["chandigarh"],
     selectedPlaceIds: [],
+    stayIds: [],
     travelMode: "Car / Bike",
     startDate: "2026-10-18",
     endDate: "2026-10-22",
