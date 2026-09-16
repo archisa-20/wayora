@@ -62,7 +62,7 @@ import {
   exploreItems,
   initialPacking,
   routeOptions,
-  staySuggestions,
+  
   travelModes,
   type PackingGroup,
   type RouteOption,
@@ -395,71 +395,6 @@ function RouteCard({ route, selected, onSelect }: { route: RouteOption; selected
   );
 }
 
-function StaySuggestionsSection() {
-  const [nights, setNights] = useState<number | null>(null);
-  const [swapped, setSwapped] = useState<string[]>([]);
-  const visible = nights === null ? staySuggestions.slice(0, 2) : staySuggestions.slice(0, Math.max(2, nights + 1));
-  const toggleSwap = (id: string) => setSwapped(swapped.includes(id) ? swapped.filter((item) => item !== id) : [...swapped, id]);
-  return (
-    <div className="mt-6">
-      <SectionTitle>Stays near this route</SectionTitle>
-      <Card className="p-4">
-        <p className="text-[10px] leading-4 text-muted-foreground">
-          Your plan works with the stay you already have. If you’d rather break the drive differently, pick how many stay changes you want and we’ll suggest options — nothing is changed for you.
-        </p>
-        <div className="mt-3 flex gap-2 overflow-x-auto pb-1 hide-scrollbar">
-          {[{ label: "No change", value: 0 }, { label: "1 stay", value: 1 }, { label: "2 stays", value: 2 }, { label: "3 stays", value: 3 }, { label: "4 stays", value: 4 }].map((option) => (
-            <Button
-              key={option.label}
-              variant={nights === option.value ? "soft" : "outline"}
-              onClick={() => setNights(nights === option.value ? null : option.value)}
-              className={cn("h-8 shrink-0 rounded-full px-3 text-[10px]", nights === option.value && "border-primary text-primary")}
-            >
-              {option.label}
-            </Button>
-          ))}
-        </div>
-      </Card>
-      {nights === 0 ? (
-        <Card className="mt-3 flex gap-3 bg-primary-soft p-3">
-          <ShieldCheck className="h-4 w-4 shrink-0 text-primary" />
-          <p className="text-[10px] leading-4 text-muted-foreground">Keeping your current stay. You can revisit this any time before starting the trip.</p>
-        </Card>
-      ) : (
-        <div className="mt-3 space-y-3">
-          {visible.map((stay) => {
-            const picked = swapped.includes(stay.id);
-            return (
-              <Card key={stay.id} className={cn("p-4", picked && "border-primary")}>
-                <div className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
-                  <div className="min-w-0">
-                    <Pill tone="aqua">{stay.nightLabel}</Pill>
-                    <h3 className="mt-2 truncate text-sm font-bold">{stay.name}</h3>
-                    <p className="mt-0.5 truncate text-[10px] text-muted-foreground">{stay.near}</p>
-                  </div>
-                  <SafetyBadge rating={stay.safetyRating} />
-                </div>
-                <p className="mt-2 text-[10px] leading-4 text-muted-foreground">{stay.note}</p>
-                <div className="mt-3 grid grid-cols-3 divide-x divide-border rounded-xl bg-muted py-2.5 text-center">
-                  <div><strong className="block text-[10px]">{stay.price}</strong><span className="text-[8px] text-muted-foreground">Price</span></div>
-                  <div><strong className="block text-[10px]">{stay.rating.toFixed(1)} ★</strong><span className="text-[8px] text-muted-foreground">Guest rating</span></div>
-                  <div><strong className="block text-[10px]">{stay.detour}</strong><span className="text-[8px] text-muted-foreground">Detour</span></div>
-                </div>
-                <div className="mt-3 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
-                  <span className="min-w-0 truncate text-[10px] text-muted-foreground">{stay.tag}</span>
-                  <Button variant={picked ? "soft" : "outline"} className={cn("h-9 text-xs", picked && "border-primary text-primary")} onClick={() => toggleSwap(stay.id)}>
-                    {picked ? <><Check />Switched</> : <><BedDouble />Switch stay</>}
-                  </Button>
-                </div>
-              </Card>
-            );
-          })}
-          <p className="text-center text-[9px] text-muted-foreground">Sample stays and ratings for the prototype — no live availability or booking.</p>
-        </div>
-      )}
-    </div>
-  );
-}
 
 function RouteOptionsScreen({ waypoints, onBack, selected, setSelected, onContinue }: { waypoints: Waypoint[]; onBack: () => void; selected: string; setSelected: (id: string) => void; onContinue: () => void }) {
   return (
