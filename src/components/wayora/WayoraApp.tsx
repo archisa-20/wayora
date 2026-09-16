@@ -78,6 +78,8 @@ import {
   type Waypoint,
 } from "@/lib/wayora-trip";
 import { RouteMap, SafetyBadge } from "@/components/wayora/RouteMap";
+import { LiveNavMap } from "@/components/wayora/LiveNavMap";
+import { StayDiscovery, StaySummary } from "@/components/wayora/StayDiscovery";
 
 type Screen =
   | "intro"
@@ -85,6 +87,7 @@ type Screen =
   | "routes"
   | "recommend"
   | "plan"
+  | "stays"
   | "overview"
   | "navigate"
   | "packing"
@@ -103,6 +106,7 @@ type TripState = {
   destinationId: string;
   stopIds: string[];
   selectedPlaceIds: string[];
+  stayIds: string[];
   travelMode: string;
   startDate: string;
   endDate: string;
@@ -588,7 +592,7 @@ function RouteFlow({ route, activeIndex, onRemove }: { route: Waypoint[]; active
   );
 }
 
-function RoutePlanScreen({ route, onBack, onRemove, onStart, onOverview }: { route: Waypoint[]; onBack: () => void; onRemove: (id: string) => void; onStart: () => void; onOverview: () => void }) {
+function RoutePlanScreen({ route, stayIds, onBack, onRemove, onStart, onOverview, onStays }: { route: Waypoint[]; stayIds: string[]; onBack: () => void; onRemove: (id: string) => void; onStart: () => void; onOverview: () => void; onStays: () => void }) {
   const summary = routeSummary(route);
   return (
     <div className="min-h-[844px] bg-background">
@@ -618,8 +622,44 @@ function RoutePlanScreen({ route, onBack, onRemove, onStart, onOverview }: { rou
             ))}
           </div>
         </Card>
-        <Button variant="wayora" size="lg" className="w-full" onClick={onStart}><Play />Start Trip</Button>
+        <Button variant="wayora" size="lg" className="w-full" onClick={onStays}><BedDouble />{stayIds.length > 0 ? `Stays (${stayIds.length} selected)` : "Find Stays Along Route"}</Button>
         <Button variant="outline" className="w-full" onClick={onOverview}>View trip overview<ChevronRight /></Button>
+        <Button variant="ghost" className="w-full text-primary" onClick={onStart}><Play />Start Trip</Button>
+      </main>
+    </div>
+  );
+}
+
+function StaysScreen({
+  route,
+  stayIds,
+  toggleStay,
+  setStayIds,
+  onBack,
+  onContinue,
+}: {
+  route: Waypoint[];
+  stayIds: string[];
+  toggleStay: (id: string) => void;
+  setStayIds: (ids: string[]) => void;
+  onBack: () => void;
+  onContinue: () => void;
+}) {
+  return (
+    <div className="min-h-[844px] bg-background">
+      <TopBar title="Recommended Stays" onBack={onBack} />
+      <main className="space-y-4 px-4 pb-8">
+        <div>
+          <p className="text-xs font-semibold text-primary">Itinerary finalised · stays next</p>
+          <h2 className="mt-1 text-xl font-bold">Where will you stay?</h2>
+          <p className="mt-1 text-xs leading-5 text-muted-foreground">
+            Tap any stop or stretch on your route to see nearby stays, or take Wayora’s optimal plan.
+          </p>
+        </div>
+        <StayDiscovery route={route} stayIds={stayIds} toggleStay={toggleStay} setStayIds={setStayIds} />
+        <Button variant="wayora" size="lg" className="w-full" onClick={onContinue}>
+          Continue to Trip Overview<ArrowRight />
+        </Button>
       </main>
     </div>
   );
@@ -632,6 +672,7 @@ function ActiveNavigationScreen({
   arrived,
   paused,
   onTogglePause,
+  onSimulate,
   onContinue,
   onBack,
   onFinish,
@@ -642,6 +683,7 @@ function ActiveNavigationScreen({
   arrived: boolean;
   paused: boolean;
   onTogglePause: () => void;
+  onSimulate: () => void;
   onContinue: () => void;
   onBack: () => void;
   onFinish: () => void;
@@ -680,11 +722,7 @@ function ActiveNavigationScreen({
         </Card>
 
         <div className="relative">
-          <RouteMap route={route} legIndex={legIndex} legProgress={legProgress} active className="h-72" />
-          <div className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-card/90 px-2 py-1 text-[9px] font-bold text-primary">
-            <span className={cn("h-1.5 w-1.5 rounded-full bg-success", !arrived && !paused && "animate-pulse")} />
-            {arrived ? "Stopped" : paused ? "Paused" : "GPS live"}
-          </div>
+          <LiveNavMap route={route} legIndex={legIndex} legProgress={legProgress} paused={paused} arrived={arrived} className="h-72" />
           <div className="absolute bottom-2 right-2 grid gap-2">
             <Button variant="soft" size="icon" className="h-9 w-9 rounded-full bg-card shadow-card" aria-label="Recenter map"><LocateFixed className="h-4 w-4 text-primary" /></Button>
             {!arrived && (
@@ -730,7 +768,7 @@ function ActiveNavigationScreen({
         <div><SectionTitle>Journey Flow</SectionTitle><RouteFlow route={route} activeIndex={arrived ? legIndex + 1 : legIndex} /></div>
 
         {!arrived && (
-          <Button variant="wayora" size="lg" className="w-full" onClick={onSimulate}><Play />Simulate Progress</Button>
+          <Button variant="wayora" size="lg" className="w-full" onClick={onSimulate} disabled={paused}><Play />Simulate Progress</Button>
         )}
         <p className="text-center text-[9px] text-muted-foreground">Prototype navigation — position is simulated, no live GPS is used.</p>
       </main>
@@ -758,7 +796,7 @@ function WeatherStrip({ route }: { route: Waypoint[] }) {
   );
 }
 
-function TripOverviewScreen({ route, waypoints, onBack, onPacking, onSave, onStart }: { route: RouteOption; waypoints: Waypoint[]; onBack: () => void; onPacking: () => void; onSave: () => void; onStart: () => void }) {
+function TripOverviewScreen({ route, waypoints, stayIds, onBack, onPacking, onSave, onStart, onStays }: { route: RouteOption; waypoints: Waypoint[]; stayIds: string[]; onBack: () => void; onPacking: () => void; onSave: () => void; onStart: () => void; onStays: () => void }) {
   const summary = routeSummary(waypoints);
   return (
     <div className="min-h-[844px] bg-background">
