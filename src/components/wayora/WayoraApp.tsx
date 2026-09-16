@@ -1018,12 +1018,12 @@ export function WayoraApp() {
     case "profile": content = <ProfileScreen navigate={tabNavigate} signedIn={signedIn} onAuth={() => { setAuthReturn("profile"); go("auth"); }} onOffline={() => requireSignIn("offline", "offline")} />; break;
   }
   return (
-    <div className="min-h-screen bg-muted py-0 sm:py-8">
-      <div className="phone-shell relative mx-auto min-h-[844px] w-full max-w-[390px] overflow-x-hidden bg-background sm:rounded-[34px] sm:border sm:border-border">
+    <div className="app-stage bg-muted">
+      <div className="phone-shell app-viewport relative mx-auto overflow-x-hidden bg-background sm:rounded-[34px] sm:border sm:border-border">
         {content}
         <SignInPrompt kind={prompt} open={prompt !== null} onOpenChange={(open) => !open && setPrompt(null)} onSignIn={openAuth} onGuest={() => setPrompt(null)} />
         <BookingDetail title={bookingDetail} open={Boolean(bookingDetail)} onOpenChange={(open) => !open && setBookingDetail("")} onSave={() => { setBookingDetail(""); requireSignIn("booking"); }} />
-        {screen !== "intro" && <div className="pointer-events-none fixed bottom-1 left-1/2 z-40 h-1 w-28 -translate-x-1/2 rounded-full bg-foreground/80 sm:hidden" />}
+        {screen !== "intro" && <div className="pointer-events-none sticky bottom-1 z-40 mx-auto h-1 w-28 rounded-full bg-foreground/80 sm:hidden" />}
       </div>
       <div className="fixed bottom-4 right-4 hidden rounded-full bg-card px-3 py-2 text-[10px] text-muted-foreground shadow-card lg:block">WAYORA · Mobile prototype</div>
     </div>

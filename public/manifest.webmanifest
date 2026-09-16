@@ -1,0 +1,33 @@
+{
+  "id": "/",
+  "name": "WAYORA — Intelligent Travel Companion",
+  "short_name": "WAYORA",
+  "description": "Plan routes, organize trips, choose stays, and navigate journeys with Wayora.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone"],
+  "orientation": "portrait-primary",
+  "background_color": "#F8F5FF",
+  "theme_color": "#8823C7",
+  "icons": [
+    {
+      "src": "/icons/wayora-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/wayora-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/wayora-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
