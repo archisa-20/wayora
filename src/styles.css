@@ -135,6 +135,31 @@
   overscroll-behavior: contain;
 }
 
+@media (max-width: 767px) {
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .app-stage {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 100svh;
+    min-height: 100dvh;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    display: block;
+  }
+
+  .app-viewport {
+    width: 100%;
+    min-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    overflow-x: visible;
+    overflow-y: visible;
+    overscroll-behavior: auto;
+  }
+}
+
 @media (min-width: 768px) {
   .app-stage {
     place-items: center;
