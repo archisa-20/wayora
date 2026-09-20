@@ -44,6 +44,27 @@ Do not make any other changes.
 
 This project was built with [Lovable](https://lovable.dev).
 
+## Repository Architecture
+
+The repository keeps the existing React prototype and provides a Flutter-ready
+mobile application under `android/`:
+
+```text
+android/
+├── lib/
+│   ├── app/       # Application bootstrap and app-level wiring
+│   ├── core/      # Shared infrastructure and theme
+│   ├── features/  # Feature-specific UI and domain code
+│   └── shared/    # Reusable widgets and utilities
+├── test/          # Flutter widget and unit tests
+├── android/      # Native Android host project files
+├── pubspec.yaml
+└── analysis_options.yaml
+```
+
+`backend/` and `ml/` are reserved for future services and model code. The
+React prototype remains independently runnable from `prototype/`.
+
 **Live app**: https://wayora-trips.lovable.app
 
 ## Build with Lovable
