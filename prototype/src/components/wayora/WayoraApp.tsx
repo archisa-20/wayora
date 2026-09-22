@@ -62,7 +62,7 @@ import {
   exploreItems,
   initialPacking,
   routeOptions,
-  
+
   travelModes,
   type PackingGroup,
   type RouteOption,
@@ -263,65 +263,65 @@ function TripSetupScreen({
   return (
     <div className="min-h-[844px] bg-background">
       <TopBar title="Trip Setup" onBack={onBack} />
-      <main className="space-y-4 px-4 pb-8">
-        <div className="py-1">
+      <main className="space-y-2.5 px-4 pb-4">
+        <div className="py-0.5">
           <p className="text-xs font-semibold text-primary">Plan your route · Solo trip</p>
-          <h2 className="mt-1 text-[22px] font-bold text-foreground">Where are you going?</h2>
+          <h2 className="mt-0.5 text-lg font-bold text-foreground">Where are you going?</h2>
         </div>
-        <Card className="p-4">
-          <button type="button" onClick={() => setTrip({ originId: "new-delhi" })} className="mb-3 flex min-h-11 w-full items-center gap-3 rounded-xl bg-primary-soft px-3 text-left text-primary transition-colors hover:bg-accent">
+        <Card className="p-3">
+          <button type="button" onClick={() => setTrip({ originId: "new-delhi" })} className="mb-2 flex min-h-9 w-full items-center gap-3 rounded-xl bg-primary-soft px-3 text-left text-primary transition-colors hover:bg-accent">
             <LocateFixed className="h-4 w-4 shrink-0" /><span className="flex-1 text-xs font-semibold">Use Current Location</span><ChevronRight className="h-4 w-4" />
           </button>
-          <label className="mb-1 block text-[10px] font-semibold text-muted-foreground" htmlFor="origin-select">FROM</label>
+          <label className="mb-0.5 block text-[10px] font-semibold text-muted-foreground" htmlFor="origin-select">FROM</label>
           <div className="relative">
-            <MapPin className="absolute left-3 top-3.5 h-4 w-4 text-primary" />
+            <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-primary" />
             <select
               id="origin-select"
               value={trip.originId}
               onChange={(event) => setTrip({ originId: event.target.value, stopIds: trip.stopIds.filter((id) => id !== event.target.value) })}
-              className="h-11 w-full appearance-none rounded-xl border border-input bg-surface-raised pl-10 pr-9 text-sm text-foreground"
+              className="h-9 w-full appearance-none rounded-xl border border-input bg-surface-raised pl-10 pr-9 text-sm text-foreground"
             >
               {cityCatalog.filter((place) => place.id !== trip.destinationId).map((place) => <option key={place.id} value={place.id}>{place.name}</option>)}
             </select>
-            <ChevronDown className="pointer-events-none absolute right-3 top-3.5 h-4 w-4 text-muted-foreground" />
+            <ChevronDown className="pointer-events-none absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
           </div>
-          <div className="ml-5 h-4 border-l border-dashed border-primary-light" />
-          <label className="mb-1 block text-[10px] font-semibold text-muted-foreground" htmlFor="destination-select">TO</label>
+          <div className="ml-5 h-2 border-l border-dashed border-primary-light" />
+          <label className="mb-0.5 block text-[10px] font-semibold text-muted-foreground" htmlFor="destination-select">TO</label>
           <div className="relative">
-            <Navigation className="absolute left-3 top-3.5 h-4 w-4 text-primary" />
+            <Navigation className="absolute left-3 top-2.5 h-4 w-4 text-primary" />
             <select
               id="destination-select"
               value={trip.destinationId}
               onChange={(event) => setTrip({ destinationId: event.target.value, stopIds: trip.stopIds.filter((id) => id !== event.target.value), selectedPlaceIds: [] })}
-              className="h-11 w-full appearance-none rounded-xl border border-input bg-surface-raised pl-10 pr-9 text-sm text-foreground"
+              className="h-9 w-full appearance-none rounded-xl border border-input bg-surface-raised pl-10 pr-9 text-sm text-foreground"
             >
               {cityCatalog.filter((place) => place.id !== trip.originId).map((place) => <option key={place.id} value={place.id}>{place.name}</option>)}
             </select>
-            <ChevronDown className="pointer-events-none absolute right-3 top-3.5 h-4 w-4 text-muted-foreground" />
+            <ChevronDown className="pointer-events-none absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
           </div>
-          <p className="mt-4 text-[10px] font-semibold text-muted-foreground">INTERMEDIATE STOPS</p>
+          <p className="mt-2.5 text-[10px] font-semibold text-muted-foreground">INTERMEDIATE STOPS</p>
           {trip.stopIds.length > 0 && (
-            <div className="mt-2 space-y-2">
+            <div className="mt-1.5 space-y-1.5">
               {trip.stopIds.map((id, index) => {
                 const stop = findPlace(id)!;
                 return (
-                  <div key={id} className="grid grid-cols-[minmax(0,1fr)_44px] items-center gap-2 rounded-xl bg-muted pl-3">
-                    <div className="min-w-0 py-2">
+                  <div key={id} className="grid grid-cols-[minmax(0,1fr)_40px] items-center gap-2 rounded-xl bg-muted pl-3">
+                    <div className="min-w-0 py-1.5">
                       <p className="truncate text-xs font-semibold">Stop {index + 1} · {stop.name}</p>
                       <SafetyBadge rating={stop.safetyRating} className="mt-1" />
                     </div>
-                    <Button variant="ghost" size="icon" onClick={() => setTrip({ stopIds: trip.stopIds.filter((item) => item !== id) })} aria-label={`Remove ${stop.name}`}><X /></Button>
+                    <Button variant="ghost" size="icon" onClick={() => setTrip({ stopIds: trip.stopIds.filter((item) => item !== id) })} aria-label={`Remove ${stop.name}`} className="h-9 w-9"><X className="h-4 w-4" /></Button>
                   </div>
                 );
               })}
             </div>
           )}
-          <div className="relative mt-2">
-            <Search className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
-            <Input value={query} onChange={(event) => { setQuery(event.target.value); setNotice(""); }} placeholder="Search a place to add as a stop" className="h-11 rounded-xl pl-10 shadow-none" aria-label="Search intermediate stop" />
+          <div className="relative mt-1.5">
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input value={query} onChange={(event) => { setQuery(event.target.value); setNotice(""); }} placeholder="Search a place to add as a stop" className="h-9 rounded-xl pl-10 shadow-none" aria-label="Search intermediate stop" />
           </div>
           {query.trim() !== "" && (
-            <div className="mt-2 overflow-hidden rounded-xl border border-border">
+            <div className="mt-1.5 overflow-hidden rounded-xl border border-border">
               {suggestions.length === 0 && <p className="p-3 text-[10px] text-muted-foreground">No matching places.</p>}
               {suggestions.map((place) => {
                 const reason = blockedReason(place);
@@ -331,7 +331,7 @@ function TripSetupScreen({
                     type="button"
                     onClick={() => addStop(place)}
                     disabled={Boolean(reason)}
-                    className={cn("grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-2 border-b border-border px-3 py-2.5 text-left last:border-0", reason ? "cursor-not-allowed bg-muted/60 opacity-70" : "hover:bg-primary-soft")}
+                    className={cn("grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-2 border-b border-border px-3 py-2 text-left last:border-0", reason ? "cursor-not-allowed bg-muted/60 opacity-70" : "hover:bg-primary-soft")}
                   >
                     <span className="min-w-0">
                       <span className="block truncate text-xs font-semibold">{place.name}</span>
@@ -343,34 +343,30 @@ function TripSetupScreen({
               })}
             </div>
           )}
-          {notice && <p className="mt-2 text-[10px] font-semibold text-peach">{notice}</p>}
+          {notice && <p className="mt-1.5 text-[10px] font-semibold text-peach">{notice}</p>}
         </Card>
-        <Card className="p-4">
-          <p className="mb-3 text-[10px] font-semibold text-muted-foreground">DATES / DURATION</p>
+        <Card className="p-3">
+          <p className="mb-2 text-[10px] font-semibold text-muted-foreground">DATES / DURATION</p>
           <div className="grid grid-cols-2 gap-2">
-            <label className="rounded-xl bg-muted p-3 text-[10px] text-muted-foreground">Start date<Input type="date" value={trip.startDate} onChange={(event) => setTrip({ startDate: event.target.value })} className="mt-1 h-7 border-0 p-0 text-xs text-foreground shadow-none" /></label>
-            <label className="rounded-xl bg-muted p-3 text-[10px] text-muted-foreground">End date<Input type="date" value={trip.endDate} onChange={(event) => setTrip({ endDate: event.target.value })} className="mt-1 h-7 border-0 p-0 text-xs text-foreground shadow-none" /></label>
+            <label className="rounded-xl bg-muted p-2.5 text-[10px] text-muted-foreground">Start date<Input type="date" value={trip.startDate} onChange={(event) => setTrip({ startDate: event.target.value })} className="mt-1 h-7 border-0 p-0 text-xs text-foreground shadow-none" /></label>
+            <label className="rounded-xl bg-muted p-2.5 text-[10px] text-muted-foreground">End date<Input type="date" value={trip.endDate} onChange={(event) => setTrip({ endDate: event.target.value })} className="mt-1 h-7 border-0 p-0 text-xs text-foreground shadow-none" /></label>
           </div>
-          <div className="mt-2 flex h-11 items-center gap-3 rounded-xl bg-muted px-3 text-xs"><CalendarDays className="h-4 w-4 text-primary" /><span className="flex-1">4 nights · 5 days · Solo trip</span></div>
+          <div className="mt-1.5 flex h-9 items-center gap-3 rounded-xl bg-muted px-3 text-xs"><CalendarDays className="h-4 w-4 text-primary" /><span className="flex-1">4 nights · 5 days · Solo trip</span></div>
         </Card>
         <div>
-          <p className="mb-2 text-[10px] font-semibold text-muted-foreground">MODE OF TRAVEL</p>
-          <div className="grid grid-cols-4 gap-2">
+          <p className="mb-1.5 text-[10px] font-semibold text-muted-foreground">MODE OF TRAVEL</p>
+          <div className="grid grid-cols-4 gap-1.5">
             {travelModes.map((item) => {
               const ModeIcon = item.icon;
               const active = trip.travelMode === item.label;
-              return <Button key={item.label} variant={active ? "soft" : "outline"} onClick={() => setTrip({ travelMode: item.label })} className={cn("h-[66px] min-w-0 flex-col gap-1 px-1 text-[9px]", active && "border-primary text-primary")}><ModeIcon className="h-5 w-5" />{item.label}</Button>;
+              return <Button key={item.label} variant={active ? "soft" : "outline"} onClick={() => setTrip({ travelMode: item.label })} className={cn("h-12 min-w-0 flex-col gap-1 px-1 text-[9px]", active && "border-primary text-primary")}><ModeIcon className="h-4 w-4" />{item.label}</Button>;
             })}
           </div>
         </div>
-        <Card className="p-4">
-          <div className="mb-2 flex justify-between text-[10px]"><span className="text-muted-foreground">TRIP BUDGET</span><strong>₹{budget[0]}K</strong></div>
+        <Card className="p-3">
+          <div className="mb-1.5 flex justify-between text-[10px]"><span className="text-muted-foreground">TRIP BUDGET</span><strong>₹{budget[0]}K</strong></div>
           <Slider value={budget} onValueChange={setBudget} min={10} max={100} step={5} aria-label="Trip budget" />
           <div className="mt-1 flex justify-between text-[9px] text-muted-foreground"><span>₹10K</span><span>₹100K</span></div>
-        </Card>
-        <Card className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 bg-primary-soft p-3">
-          <span className="grid h-9 w-9 place-items-center rounded-full bg-primary text-primary-foreground"><UserRound className="h-4 w-4" /></span>
-          <p className="text-[10px] leading-4 text-muted-foreground">Wayora plans solo journeys. Your route will run {origin.name} → {trip.stopIds.length > 0 ? `${trip.stopIds.map((id) => findPlace(id)!.name).join(" → ")} → ` : ""}{destination.name}.</p>
         </Card>
         <Button variant="wayora" size="lg" className="w-full" onClick={onFind}>Find Routes<ArrowRight /></Button>
       </main>
@@ -378,26 +374,39 @@ function TripSetupScreen({
   );
 }
 
-function RouteCard({ route, selected, onSelect }: { route: RouteOption; selected: boolean; onSelect: () => void }) {
+function RouteCard({ route, selected, onSelect, expanded, onToggleInfo }: { route: RouteOption; selected: boolean; onSelect: () => void; expanded: boolean; onToggleInfo: () => void }) {
   return (
-    <Card className={cn("overflow-hidden p-4 transition-colors", selected && "border-primary")}>
-      <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-3">
-        <div className="min-w-0"><Pill tone={route.badge === "Cheapest" ? "aqua" : route.badge === "Fastest" ? "peach" : "purple"}>{route.badge}</Pill><h3 className="mt-2 truncate text-sm font-bold">{route.name}</h3><p className="mt-1 text-[10px] text-muted-foreground">{route.mode} · {route.departure} — {route.arrival}</p></div>
-        <div className={cn("grid h-10 w-10 shrink-0 place-items-center rounded-xl", selected ? "bg-primary text-primary-foreground" : "bg-primary-soft text-primary")}><RouteIcon className="h-5 w-5" /></div>
+    <Card className={cn("overflow-hidden transition-colors", selected && "border-primary")}>
+      <div className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-1 pr-1.5">
+        <button type="button" onClick={onSelect} aria-pressed={selected} className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-3 py-3 pl-4 pr-1 text-left">
+          <div className={cn("grid h-9 w-9 shrink-0 place-items-center rounded-xl", selected ? "bg-primary text-primary-foreground" : "bg-primary-soft text-primary")}><RouteIcon className="h-4 w-4" /></div>
+          <span className="min-w-0"><Pill tone={route.badge === "Cheapest" ? "aqua" : route.badge === "Fastest" ? "peach" : "purple"}>{route.badge}</Pill><span className="mt-1 block truncate text-sm font-bold text-foreground">{route.name}</span></span>
+        </button>
+        {selected && <Check className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />}
+        <Button variant="ghost" size="icon" onClick={onToggleInfo} aria-label={expanded ? `Hide details for ${route.name}` : `View details for ${route.name}`} aria-expanded={expanded} className="h-10 w-10 shrink-0 rounded-full text-primary">
+          <Info className="h-[18px] w-[18px]" />
+        </Button>
       </div>
-      <div className="my-4 grid grid-cols-3 divide-x divide-border rounded-xl bg-muted py-3 text-center">
-        <div><strong className="block text-xs">{route.duration}</strong><span className="text-[9px] text-muted-foreground">Duration</span></div>
-        <div><strong className="block text-xs">{route.distance}</strong><span className="text-[9px] text-muted-foreground">Distance</span></div>
-        <div><strong className="block text-xs">{route.price}</strong><span className="text-[9px] text-muted-foreground">Estimated</span></div>
-      </div>
-      <div className="space-y-2 text-[10px] text-muted-foreground"><p className="flex items-center gap-2"><MapPin className="h-3.5 w-3.5 text-primary" />{route.stops}</p><p className="flex items-center gap-2"><CloudRain className="h-3.5 w-3.5 text-primary" />{route.note}</p></div>
-      <Button variant={selected ? "wayora" : "outline"} className="mt-4 w-full" onClick={onSelect}>{selected ? <><Check />Selected</> : <>Select Route<ArrowRight /></>}</Button>
+      {expanded && (
+        <div className="border-t border-border px-4 pb-4 pt-3">
+          <p className="text-[10px] text-muted-foreground">{route.mode} · {route.departure} — {route.arrival}</p>
+          <div className="my-3 grid grid-cols-3 divide-x divide-border rounded-xl bg-muted py-3 text-center">
+            <div><strong className="block text-xs">{route.duration}</strong><span className="text-[9px] text-muted-foreground">Duration</span></div>
+            <div><strong className="block text-xs">{route.distance}</strong><span className="text-[9px] text-muted-foreground">Distance</span></div>
+            <div><strong className="block text-xs">{route.price}</strong><span className="text-[9px] text-muted-foreground">Estimated</span></div>
+          </div>
+          <div className="space-y-2 text-[10px] text-muted-foreground">
+            <p className="flex items-center gap-2"><MapPin className="h-3.5 w-3.5 shrink-0 text-primary" />{route.stops}</p>
+            <p className="flex items-center gap-2"><CloudRain className="h-3.5 w-3.5 shrink-0 text-primary" />{route.note}</p>
+          </div>
+        </div>
+      )}
     </Card>
   );
 }
 
-
 function RouteOptionsScreen({ waypoints, onBack, selected, setSelected, onContinue }: { waypoints: Waypoint[]; onBack: () => void; selected: string; setSelected: (id: string) => void; onContinue: () => void }) {
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   return (
     <div className="min-h-[844px] bg-background">
       <TopBar title="Route Options" onBack={onBack} />
@@ -408,8 +417,18 @@ function RouteOptionsScreen({ waypoints, onBack, selected, setSelected, onContin
           <p className="mt-1 text-xs text-muted-foreground">3 routes compared for weather, roads, time and cost — all passing your stops.</p>
         </div>
         <RouteMap route={waypoints} className="mb-4 h-40" showAllLabels />
-        <div className="space-y-3">{routeOptions.map((route) => <RouteCard key={route.id} route={route} selected={selected === route.id} onSelect={() => setSelected(route.id)} />)}</div>
-        
+        <div className="space-y-3">
+          {routeOptions.map((route) => (
+            <RouteCard
+              key={route.id}
+              route={route}
+              selected={selected === route.id}
+              onSelect={() => setSelected(route.id)}
+              expanded={expandedId === route.id}
+              onToggleInfo={() => setExpandedId(expandedId === route.id ? null : route.id)}
+            />
+          ))}
+        </div>
         <Button variant="wayora" size="lg" className="mt-4 w-full" onClick={onContinue}>See Places Along Route<ArrowRight /></Button>
       </main>
     </div>
@@ -420,6 +439,43 @@ function categoryTone(category: Place["category"]) {
   if (category === "Food" || category === "Cafe") return "peach" as const;
   if (category === "Stay" || category === "Rest stop") return "aqua" as const;
   return "purple" as const;
+}
+
+function PlaceCard({ place, added, onToggleAdd, expanded, onToggleInfo }: { place: Place; added: boolean; onToggleAdd: () => void; expanded: boolean; onToggleInfo: () => void }) {
+  return (
+    <Card className={cn("overflow-hidden transition-colors", added && "border-primary")}>
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-1 pr-1.5">
+        <button type="button" onClick={onToggleAdd} aria-pressed={added} className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-3 py-3 pl-4 pr-1 text-left">
+          <div className={cn("grid h-9 w-9 shrink-0 place-items-center rounded-xl", added ? "bg-primary text-primary-foreground" : "bg-primary-soft text-primary")}>
+            {added ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+          </div>
+          <span className="min-w-0">
+            <span className="block truncate text-sm font-bold text-foreground">{place.name}</span>
+            <SafetyBadge rating={place.safetyRating} className="mt-1" />
+          </span>
+        </button>
+        <Button variant="ghost" size="icon" onClick={onToggleInfo} aria-label={expanded ? `Hide details for ${place.name}` : `View details for ${place.name}`} aria-expanded={expanded} className="h-10 w-10 shrink-0 rounded-full text-primary">
+          <Info className="h-[18px] w-[18px]" />
+        </Button>
+      </div>
+      {expanded && (
+        <div className="border-t border-border px-4 pb-4 pt-3">
+          <Pill tone={categoryTone(place.category)}>{place.category}</Pill>
+          <p className="mt-2 truncate text-[10px] text-muted-foreground">{place.region}</p>
+          <p className="mt-2 text-[10px] leading-4 text-muted-foreground">{place.description}</p>
+          <div className="mt-3 grid grid-cols-3 divide-x divide-border rounded-xl bg-muted py-2.5 text-center">
+            <div><strong className="block text-[10px]">{place.distanceFromRoute}</strong><span className="text-[8px] text-muted-foreground">From route</span></div>
+            <div><strong className="block text-[10px]">{place.detourTime}</strong><span className="text-[8px] text-muted-foreground">Detour</span></div>
+            <div><strong className="block text-[10px]">{place.visitDuration}</strong><span className="text-[8px] text-muted-foreground">Visit</span></div>
+          </div>
+          <div className="mt-2 flex flex-wrap gap-1">
+            {place.safetyNotes.map((note) => <Pill key={note} tone="neutral">{note}</Pill>)}
+          </div>
+          <p className="mt-3 text-[10px] text-muted-foreground">{place.cost} · {place.openHours}</p>
+        </div>
+      )}
+    </Card>
+  );
 }
 
 function RecommendationsScreen({
@@ -437,6 +493,7 @@ function RecommendationsScreen({
 }) {
   const [filter, setFilter] = useState("All");
   const filters = ["All", "Attraction", "Viewpoint", "Food", "Rest stop", "Stay"];
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const visible = filter === "All" ? places : places.filter((place) => place.category === filter || (filter === "Food" && place.category === "Cafe"));
   return (
     <div className="min-h-[844px] bg-background">
@@ -456,35 +513,17 @@ function RecommendationsScreen({
           {visible.map((place) => {
             const added = selectedIds.includes(place.id);
             return (
-              <Card key={place.id} className={cn("p-4", added && "border-primary")}>
-                <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-3">
-                  <div className="min-w-0">
-                    <Pill tone={categoryTone(place.category)}>{place.category}</Pill>
-                    <h3 className="mt-2 truncate text-sm font-bold">{place.name}</h3>
-                    <p className="mt-0.5 truncate text-[10px] text-muted-foreground">{place.region}</p>
-                  </div>
-                  <SafetyBadge rating={place.safetyRating} />
-                </div>
-                <p className="mt-2 text-[10px] leading-4 text-muted-foreground">{place.description}</p>
-                <div className="mt-3 grid grid-cols-3 divide-x divide-border rounded-xl bg-muted py-2.5 text-center">
-                  <div><strong className="block text-[10px]">{place.distanceFromRoute}</strong><span className="text-[8px] text-muted-foreground">From route</span></div>
-                  <div><strong className="block text-[10px]">{place.detourTime}</strong><span className="text-[8px] text-muted-foreground">Detour</span></div>
-                  <div><strong className="block text-[10px]">{place.visitDuration}</strong><span className="text-[8px] text-muted-foreground">Visit</span></div>
-                </div>
-                <div className="mt-2 flex flex-wrap gap-1">
-                  {place.safetyNotes.map((note) => <Pill key={note} tone="neutral">{note}</Pill>)}
-                </div>
-                <div className="mt-3 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3">
-                  <span className="min-w-0 truncate text-[10px] text-muted-foreground">{place.cost} · {place.openHours}</span>
-                  <Button variant={added ? "soft" : "outline"} className={cn("h-9 text-xs", added && "border-primary text-primary")} onClick={() => toggle(place.id)}>
-                    {added ? <><Check />Added to Route</> : <><Plus />Add Stop</>}
-                  </Button>
-                </div>
-              </Card>
+              <PlaceCard
+                key={place.id}
+                place={place}
+                added={added}
+                onToggleAdd={() => toggle(place.id)}
+                expanded={expandedId === place.id}
+                onToggleInfo={() => setExpandedId(expandedId === place.id ? null : place.id)}
+              />
             );
           })}
-        </div>
-        <Card className="flex gap-3 bg-peach-soft p-3"><Info className="h-4 w-4 shrink-0 text-peach" /><p className="text-[10px] leading-4 text-muted-foreground">Safety ratings are prototype estimates for demonstration, not verified real-world data.</p></Card>
+        </div><Card className="flex gap-3 bg-peach-soft p-3"><Info className="h-4 w-4 shrink-0 text-peach" /><p className="text-[10px] leading-4 text-muted-foreground">Safety ratings are prototype estimates for demonstration, not verified real-world data.</p></Card>
         <Button variant="wayora" size="lg" className="w-full" onClick={onContinue}>Build My Route ({selectedIds.length} selected)<ArrowRight /></Button>
       </main>
     </div>
