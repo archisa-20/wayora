@@ -598,7 +598,6 @@ function RoutePlanScreen({ route, stayIds, onBack, onRemove, onStart, onOverview
           </div>
         </Card>
         <Button variant="wayora" size="lg" className="w-full" onClick={onStays}><BedDouble />{stayIds.length > 0 ? `Stays (${stayIds.length} selected)` : "Find Stays Along Route"}</Button>
-        <Button variant="outline" className="w-full" onClick={onOverview}>View trip overview<ChevronRight /></Button>
         <Button variant="ghost" className="w-full text-primary" onClick={onStart}><Play />Start Trip</Button>
       </main>
     </div>
@@ -819,21 +818,39 @@ function PackingScreen({ groups, setGroups, onBack, onBookings, onGate }: { grou
   const [newItem, setNewItem] = useState("");
   const all = groups.flatMap((group) => group.items);
   const packed = all.filter((item) => item.packed).length;
+  const packedItems = groups.flatMap((group) => group.items.filter((item) => item.packed).map((item) => ({ ...item, groupName: group.name })));
   const toggle = (groupName: string, itemId: string) => setGroups(groups.map((group) => group.name === groupName ? { ...group, items: group.items.map((item) => item.id === itemId ? { ...item, packed: !item.packed } : item) } : group));
   const remove = (groupName: string, itemId: string) => setGroups(groups.map((group) => group.name === groupName ? { ...group, items: group.items.filter((item) => item.id !== itemId) } : group));
   const add = () => { const value = newItem.trim(); if (!value) return; setGroups(groups.map((group) => group.name === "Essentials" ? { ...group, items: [...group.items, { id: `${Date.now()}`, label: value, packed: false }] } : group)); setNewItem(""); };
   return (
     <div className="min-h-[844px] bg-background">
-      <TopBar title="Packing List" onBack={onBack} action={<Button variant="ghost" className="px-2 text-xs text-primary" onClick={onGate}>Edit</Button>} />
+      <TopBar title="Packing" onBack={onBack} action={<Button variant="ghost" className="px-2 text-xs text-primary" onClick={onGate}>Edit</Button>} />
       <main className="space-y-4 px-4 pb-8">
         <div><h2 className="text-xl font-bold">Pack smart for Manali</h2><p className="mt-1 text-xs text-muted-foreground">Based on your trip, weather & duration</p></div>
         <Card className="flex items-center gap-3 bg-primary-soft p-3"><span className="grid h-11 w-11 place-items-center rounded-xl bg-card text-primary"><CloudRain /></span><div><strong className="block text-xs">Cool & rainy</strong><span className="text-[9px] text-muted-foreground">16–22°C · Light rain expected</span></div></Card>
         <Card className="p-4"><div className="flex justify-between text-[10px]"><strong>{packed} of {all.length} items packed</strong><span className="text-muted-foreground">{Math.round(packed / all.length * 100)}% packed</span></div><div className="mt-2 h-1.5 overflow-hidden rounded-full bg-primary-soft"><div className="h-full rounded-full bg-primary transition-all" style={{ width: `${packed / all.length * 100}%` }} /></div></Card>
         <div><SectionTitle>Weather-based suggestions</SectionTitle><div className="flex gap-2 overflow-x-auto pb-1 hide-scrollbar">{[{ icon: Umbrella, text: "Rain jacket" }, { icon: Luggage, text: "Compact umbrella" }, { icon: Bike, text: "Waterproof shoes" }].map((item) => <Pill key={item.text} tone="neutral"><item.icon className="mr-1 h-3 w-3 text-primary" />{item.text}</Pill>)}</div></div>
         <Card className="overflow-hidden">
-          {groups.map((group) => { const isOpen = expanded.includes(group.name); const count = group.items.filter((item) => item.packed).length; return <div key={group.name} className="border-b border-border last:border-0"><Button variant="ghost" onClick={() => setExpanded(isOpen ? expanded.filter((name) => name !== group.name) : [...expanded, group.name])} className="grid h-12 w-full grid-cols-[auto_minmax(0,1fr)_auto_auto] justify-start rounded-none px-3 text-left"><span>{group.icon}</span><span className="min-w-0 truncate text-xs font-semibold">{group.name}</span><span className="text-[9px] text-muted-foreground">{count} / {group.items.length}</span><ChevronDown className={cn("transition-transform", isOpen && "rotate-180")} /></Button>{isOpen && <div className="bg-surface-raised px-3 pb-2">{group.items.map((item) => <div key={item.id} className="grid min-h-10 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-t border-border"><Checkbox checked={item.packed} onCheckedChange={() => toggle(group.name, item.id)} aria-label={`Mark ${item.label} packed`} /><span className={cn("text-[11px]", item.packed && "text-muted-foreground line-through")}>{item.label}</span><Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => remove(group.name, item.id)} aria-label={`Remove ${item.label}`}><Trash2 className="h-3.5 w-3.5" /></Button></div>)}</div>}</div>; })}
+          {groups.map((group) => { const isOpen = expanded.includes(group.name); const count = group.items.filter((item) => item.packed).length; const remaining = group.items.filter((item) => !item.packed); return <div key={group.name} className="border-b border-border last:border-0"><Button variant="ghost" onClick={() => setExpanded(isOpen ? expanded.filter((name) => name !== group.name) : [...expanded, group.name])} className="grid h-12 w-full grid-cols-[auto_minmax(0,1fr)_auto_auto] justify-start rounded-none px-3 text-left"><span>{group.icon}</span><span className="min-w-0 truncate text-xs font-semibold">{group.name}</span><span className="text-[9px] text-muted-foreground">{count} / {group.items.length}</span><ChevronDown className={cn("transition-transform", isOpen && "rotate-180")} /></Button>{isOpen && <div className="bg-surface-raised px-3 pb-2">{remaining.length === 0 ? <p className="py-3 text-center text-[10px] text-muted-foreground">All packed ✓</p> : remaining.map((item) => <div key={item.id} className="grid min-h-10 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-t border-border"><Checkbox checked={item.packed} onCheckedChange={() => toggle(group.name, item.id)} aria-label={`Mark ${item.label} packed`} /><span className="text-[11px]">{item.label}</span><Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => remove(group.name, item.id)} aria-label={`Remove ${item.label}`}><Trash2 className="h-3.5 w-3.5" /></Button></div>)}</div>}</div>; })}
         </Card>
         <div className="grid grid-cols-[minmax(0,1fr)_44px] gap-2"><Input value={newItem} onChange={(event) => setNewItem(event.target.value)} onKeyDown={(event) => event.key === "Enter" && add()} placeholder="Add a packing item" className="h-11 rounded-xl bg-card" /><Button variant="soft" size="icon" onClick={add} aria-label="Add packing item"><Plus /></Button></div>
+                <div>
+          <SectionTitle>Packed ({packedItems.length})</SectionTitle>
+          {packedItems.length === 0 ? (
+            <Card className="p-4 text-center text-[10px] text-muted-foreground">Nothing packed yet — tick items above as you pack them.</Card>
+          ) : (
+            <Card className="overflow-hidden">
+              {packedItems.map((item) => (
+                <div key={item.id} className="grid min-h-10 grid-cols-[minmax(0,1fr)_auto] items-center gap-3 border-b border-border px-3 last:border-0">
+                  <span className="text-[11px]">{item.label}</span>
+                  <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => toggle(item.groupName, item.id)} aria-label={`Move ${item.label} back to packing list`}>
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              ))}
+            </Card>
+          )}
+        </div>
         <Button variant="wayora" size="lg" className="w-full" onClick={onBookings}>Explore Booking Options<ArrowRight /></Button>
       </main>
     </div>
